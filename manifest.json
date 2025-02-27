@@ -5,6 +5,6 @@
     "minAppVersion": "0.13.0",
     "description": "Fetches Spotify artist data and creates an Obsidian note.",
     "author": "Jeffrey Kishner",
-    "authorUrl": "https://jeffreykishner.com",
+    "authorUrl": "https://github.com/jkishner/spotify-artist",
     "isDesktopOnly": false
 }
