@@ -1,7 +1,7 @@
 {
     "id": "spotify-artist",
     "name": "Spotify Artist Lookup",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "minAppVersion": "0.13.0",
     "description": "Fetches Spotify artist data and creates an Obsidian note.",
     "author": "Jeffrey Kishner",
