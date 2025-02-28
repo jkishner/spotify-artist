@@ -56,10 +56,6 @@ chosicUrl: https://www.chosic.com/artist/progressive-rock/0G7KI9I5BApiXc5Sqpyil9
 ## Roadmap / Future Enhancements
 - [ ] Implement merging metadata into existing notes instead of creating duplicates.
 - [ ] Implement logic to append a number to duplicate filenames instead of failing.
-- [ ] Add more customization for metadata fields.
-- [ ] Support fetching **discographies**.
-- [ ] Option to choose image size.
-- [ ] Auto-fetch latest top tracks.
 
 ## Contributing
 Pull requests are welcome! Feel free to fork this project and submit improvements.
