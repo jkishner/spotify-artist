@@ -52,28 +52,18 @@ class SpotifyArtistLookupPlugin extends Plugin {
             body: "grant_type=client_credentials"
         });
 
-        if (!response.ok) {
-            new Notice("Error retrieving Spotify access token. Check your API credentials.");
-            return null;
-        }
-
         const data = await response.json();
         return data.access_token;
     }
 
     async fetchArtistData(artistName, accessToken) {
-        const searchUrl = `https://api.spotify.com/v1/search?q=${encodeURIComponent(artistName)}&type=artist&limit=10`;
+        const searchUrl = `https://api.spotify.com/v1/search?q=${encodeURIComponent(artistName)}&type=artist&limit=1`;
         const response = await fetch(searchUrl, {
             headers: { "Authorization": `Bearer ${accessToken}` }
         });
-
+        
         const data = await response.json();
-        if (!data.artists.items.length) return null;
-
-        // Sort artists by popularity (highest first)
-        const sortedArtists = data.artists.items.sort((a, b) => b.popularity - a.popularity);
-
-        return sortedArtists[0]; // Select the most popular artist
+        return data.artists.items[0];
     }
 
     async createArtistNote(artist) {
@@ -181,4 +171,3 @@ class SpotifySettingsTab extends PluginSettingTab {
 }
 
 module.exports = SpotifyArtistLookupPlugin;
-
