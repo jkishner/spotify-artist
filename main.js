@@ -52,18 +52,39 @@ class SpotifyArtistLookupPlugin extends Plugin {
             body: "grant_type=client_credentials"
         });
 
+        if (!response.ok) {
+            new Notice("Error retrieving Spotify access token. Check your API credentials.");
+            return null;
+        }
+
         const data = await response.json();
         return data.access_token;
     }
 
     async fetchArtistData(artistName, accessToken) {
-        const searchUrl = `https://api.spotify.com/v1/search?q=${encodeURIComponent(artistName)}&type=artist&limit=1`;
+        const searchUrl = `https://api.spotify.com/v1/search?q=${encodeURIComponent(artistName)}&type=artist&limit=10`;
         const response = await fetch(searchUrl, {
             headers: { "Authorization": `Bearer ${accessToken}` }
         });
-        
+
         const data = await response.json();
-        return data.artists.items[0];
+        if (!data.artists.items.length) return null;
+
+        // Normalize the search query for comparison
+        const normalizedQuery = artistName.toLowerCase().trim();
+
+        // Filter results to those with a matching name
+        const matchingArtists = data.artists.items.filter(artist => 
+            artist.name.toLowerCase().trim() === normalizedQuery
+        );
+
+        // If we found matches, sort by popularity and return the top one
+        if (matchingArtists.length) {
+            return matchingArtists.sort((a, b) => b.popularity - a.popularity)[0];
+        }
+
+        // If no exact match was found, fallback to the most popular overall
+        return data.artists.items.sort((a, b) => b.popularity - a.popularity)[0];
     }
 
     async createArtistNote(artist) {
@@ -72,6 +93,7 @@ class SpotifyArtistLookupPlugin extends Plugin {
         const spotifyUrl = artist.external_urls.spotify;
         const everynoiseUrl = `https://everynoise.com/artistprofile.cgi?id=${artist.id}`;
         const chosicUrl = `https://www.chosic.com/artist/${encodeURIComponent(artist.name.toLowerCase())}/${artist.id}/`;
+        const recentmusicUrl = `https://recentmusic.com/artist/${artist.id}/`;
         const imageUrl = artist.images.length ? artist.images[0].url : "";
         const filePath = `${this.settings.savePath}/${noteTitle}.md`;
         
@@ -80,6 +102,7 @@ ${genres}
 spotifyUrl: ${spotifyUrl}
 everynoiseUrl: ${everynoiseUrl}
 chosicUrl: ${chosicUrl}
+recentmusicUrl: ${recentmusicUrl}
 ---
 
 ![image](${imageUrl})`;
@@ -171,3 +194,4 @@ class SpotifySettingsTab extends PluginSettingTab {
 }
 
 module.exports = SpotifyArtistLookupPlugin;
+
